@@ -6,8 +6,10 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        HashMap hash = fileReader("day14smallinput.txt");
+        HashMap hash = fileReader("day14smallerinput.txt");
     }
+    // refactor file reader hash so index values are keys and the arraylists hold rows to make process easier
+    // later on to make 0 hash of updated index positions
     public static HashMap fileReader(String file) {
         HashMap<Integer, ArrayList<Integer>> hash = new HashMap<>();
         try (FileReader fileReader = new FileReader(file);
