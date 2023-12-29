@@ -7,6 +7,9 @@ import java.util.HashMap;
 public class Main {
     public static void main(String[] args) {
         HashMap hash = fileReader("day14smallinput.txt");
+        if (hash == null) {
+            System.out.println('h');
+        }
 
         // make a function that reads the file
         // could try getting the indexOf for each # line by line to store in a hash for future use
@@ -24,30 +27,31 @@ public class Main {
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String line;
             int columnCount = 0;
+            int l = 0;
 
             while ((line = bufferedReader.readLine()) != null) {
                 String array = line;
                 for (int j = 0; j < array.length(); j++) {
                     // if we are adding key value for the first time,  we check if the key is there then put in new column and arraylist
-                    if (!hash.containsKey(line)) {
+                    if (!hash.containsKey(columnCount)) {
                         hash.put(columnCount, new ArrayList<>());
                     }
                     else {
                         // get the index position of one # at a time and update j to that index position
-                        int l = array.indexOf('#');
+                        if (l == 0) {
+                            l = array.indexOf('#');
+                        }
                         // should be indexOf of a substring
-                        int index = array.indexOf(l);
+                        int index = array.indexOf('#', l + 1);
                         // add value if it is not - 1
                         if (index == -1) {
                             break;
                         }
-                        else {
-                            hash.get(columnCount).add(index);
-                            l = index;
-                        }// get the array list from the column count, and add the current char index to the array
+                        hash.get(columnCount).add(index);
+                        l = index;
+                        // get the array list from the column count, and add the current char index to the array
                     }
                 }
-                System.out.println(array);
             }
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
