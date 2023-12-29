@@ -26,32 +26,36 @@ public class Main {
         try (FileReader fileReader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String line;
-            int columnCount = 0;
-            int l = 0;
+            int rowCount = 0;
+            int index = 0;
 
             while ((line = bufferedReader.readLine()) != null) {
                 String array = line;
                 for (int j = 0; j < array.length(); j++) {
                     // if we are adding key value for the first time,  we check if the key is there then put in new column and arraylist
-                    if (!hash.containsKey(columnCount)) {
-                        hash.put(columnCount, new ArrayList<>());
+                    if (!hash.containsKey(rowCount)) {
+                        hash.put(rowCount, new ArrayList<>());
                     }
                     else {
                         // get the index position of one # at a time and update j to that index position
-                        if (l == 0) {
-                            l = array.indexOf('#');
+                        if (index == 0) {
+                            index = array.indexOf('#');
                         }
-                        // should be indexOf of a substring
-                        int index = array.indexOf('#', l + 1);
-                        // add value if it is not - 1
                         if (index == -1) {
                             break;
                         }
-                        hash.get(columnCount).add(index);
-                        l = index;
+                        else {
+                            hash.get(rowCount).add(index);
+                            index = array.indexOf('#', index + 1);
+                        }
+                        // should be indexOf of a substring
+
+                        // add value if it is not - 1
                         // get the array list from the column count, and add the current char index to the array
                     }
                 }
+                index = 0;
+                rowCount++;
             }
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
