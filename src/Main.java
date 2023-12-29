@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        HashMap hash = fileReader("day14smallerinput.txt");
+        HashMap hash = createIndexHash("day14smallerinput.txt");
     }
     // refactor file reader hash so indexOf values are keys and the arraylists hold rows to make process easier
     // later on to make 0 hash of updated index positions
@@ -14,7 +14,7 @@ public class Main {
     // each time I get the indexOf values line by line, check if the indexOf value already exists in the hash keys or not
     // if not then add it to the hash and a new arrayList as the value
     // otherwise, do previous logic to get each indexOf and add the current row number to the arraylist
-    public static HashMap fileReader(String file) {
+    public static HashMap createIndexHash(String file) {
         HashMap<Integer, ArrayList<Integer>> hash = new HashMap<>();
         try (FileReader fileReader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
@@ -55,4 +55,10 @@ public class Main {
         }
         return hash;
     }
+    // update index hash so that each 0 moves as North as possible stopping under # if applicable
+    public static void updateIndexHash(HashMap<Integer, ArrayList<String>> map) {
+        
+    }
+    // third step is to take each row number from key value arraylist and multiply it by the arraylist length to get
+    // the column total to total in the end for the answer
 }
