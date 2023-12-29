@@ -8,8 +8,12 @@ public class Main {
     public static void main(String[] args) {
         HashMap hash = fileReader("day14smallerinput.txt");
     }
-    // refactor file reader hash so index values are keys and the arraylists hold rows to make process easier
+    // refactor file reader hash so indexOf values are keys and the arraylists hold rows to make process easier
     // later on to make 0 hash of updated index positions
+
+    // each time I get the indexOf values line by line, check if the indexOf value already exists in the hash keys or not
+    // if not then add it to the hash and a new arrayList as the value
+    // otherwise, do previous logic to get each indexOf and add the current row number to the arraylist
     public static HashMap fileReader(String file) {
         HashMap<Integer, ArrayList<Integer>> hash = new HashMap<>();
         try (FileReader fileReader = new FileReader(file);
@@ -22,26 +26,24 @@ public class Main {
                 // read file line by line using buffering
                 String array = line;
                 for (int j = 0; j < array.length(); j++) {
-                    // if  adding key value for the first time,  check if the key is there then put in new row number and arraylist
-                    if (!hash.containsKey(rowCount)) {
-                        hash.put(rowCount, new ArrayList<>());
+                    // get the first index of during the first iteration
+                    if (index == 0) {
+                        index = array.indexOf('#');
                     }
+                    // if no # are found then break the iteration
+                    if (index == -1) {
+                        break;
+                    }
+                    // index is found at this point, so check if the key exists, if it doesn't, add it and new arraylist
+                    else if (!hash.containsKey(index)){
+                        hash.put(index, new ArrayList<>());
+                    }
+                    // otherwise, add the row to the arraylist associated with the key
                     else {
-                        // if the index is 0 then get the first occurence of the #
-                        if (index == 0) {
-                            index = array.indexOf('#');
-                        }
-                        // if no # are found then break the iteration
-                        if (index == -1) {
-                            break;
-                        }
-                        // otherwise add the index to the arraylist associated with the row
-                        else {
-                            hash.get(rowCount).add(index);
-                            // get the next index starting from where the previous index position left off
-                            // by using a substring and starting place in the indexOf function
-                            index = array.indexOf('#', index + 1);
-                        }
+                        hash.get(index).add(rowCount);
+                        // get the next index starting from where the previous index position left off
+                        // by using a substring and starting place in the indexOf function
+                        index = array.indexOf('#', index + 1);
                     }
                 }
                 // reassign index back to zero after each iteration of rows and increase row count
