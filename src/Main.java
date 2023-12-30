@@ -13,7 +13,7 @@ public class Main {
     // need to pass in two hashes to cubedShapedRocksHash to create the hashes for 0 and # where the columns and rows index positions are stored
     // or make a hash of hashes. keys for outer hash being round 0 and # rocks
     /**
-     * changes cubed and rounded hashes in place so they contain columns and rows in their hashes by storing the indices
+     * changes cubed and rounded hashes in place, so they contain columns and rows in their hashes by storing the indices
      * @param file txt file of shaped and round rocks in a matrix
      * @param cubedHash hash containing indices where the columns are keys and values are array list of index positions of #
      * @param roundHash hash containing indices where the columns are keys and values are array list of index positions of 0
@@ -37,6 +37,14 @@ public class Main {
             System.out.println("Error reading file: " + e.getMessage());
         }
     }
+
+    /**
+     * Helper method that stores the columns and corresponding rows while a file is read to record occurrence for any character passed into the parameters
+     * @param line current line of txt file
+     * @param hash hash used to store the data
+     * @param index index of current character in the string that gets updated when indexOf is called on the string
+     * @param character character that data is being collected for
+     */
     // need rowCount, index, string, hash
     public static void createHash(String line, HashMap<Integer, ArrayList<Integer>> hash, int index, char character) {
         String array = line;
