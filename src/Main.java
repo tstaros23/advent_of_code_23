@@ -6,17 +6,19 @@ import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
-        HashMap cubedHash = cubedShapedRocksHash("day14smallerinput.txt");
-        HashMap roundHash = roundShapedRocksHash(cubedHash);
+        HashMap cubedHash = new HashMap<Integer, ArrayList<Integer>>();
+        HashMap roundHash = new HashMap<Integer, ArrayList<Integer>>();
+        cubedShapedRocksHash("day14smallerinput.txt", cubedHash, roundHash);
     }
-    // refactor file reader hash so indexOf values are keys and the arraylists hold rows to make process easier
-    // later on to make 0 hash of updated index positions
-
-    // each time I get the indexOf values line by line, check if the indexOf value already exists in the hash keys or not
-    // if not then add it to the hash and a new arrayList as the value
-    // otherwise, do previous logic to get each indexOf and add the current row number to the arraylist
-    public static HashMap cubedShapedRocksHash(String file) {
-        HashMap<Integer, ArrayList<Integer>> hash = new HashMap<>();
+    // need to pass in two hashes to cubedShapedRocksHash to create the hashes for 0 and # where the columns and rows index positions are stored
+    // or make a hash of hashes. keys for outer hash being round 0 and # rocks
+    /**
+     * creates a hash from a file where the keys are columns and the values are array list of rows to represent
+     * which rows contain a cubed rock # in each column
+     * @param file txt file of shaped and round rocks in a matrix
+     * @return hashmap of columns and rows, k v
+     */
+    public static void cubedShapedRocksHash(String file, HashMap<Integer,ArrayList<Integer>> cubedHash, HashMap<Integer,ArrayList<Integer>> roundHash) {
         try (FileReader fileReader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String line;
@@ -36,12 +38,12 @@ public class Main {
                         break;
                     }
                     // index is found at this point, so check if the key exists, if it doesn't, add it and new arraylist
-                    else if (!hash.containsKey(index)){
-                        hash.put(index, new ArrayList<>());
+                    else if (!cubedHash.containsKey(index)){
+                        cubedHash.put(index, new ArrayList<>());
                     }
                     // otherwise, add the row to the arraylist associated with the key
                     else {
-                        hash.get(index).add(rowCount);
+                        cubedHash.get(index).add(rowCount);
                         // get the next index starting from where the previous index position left off
                         // by using a substring and starting place in the indexOf function
                         index = array.indexOf('#', index + 1);
@@ -54,7 +56,32 @@ public class Main {
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }
-        return hash;
+    }
+    // need rowCount, index, string, hash
+    public static void createHash(String line, HashMap<Integer, ArrayList<Integer>> hash, int index, int rowCount, char character) {
+        String array = line;
+        for (int j = 0; j < array.length(); j++) {
+            // get the first index of during the first iteration
+            if (index == 0) {
+                index = array.indexOf(character);
+            }
+            // if no # are found then break the iteration
+            if (index == -1) {
+                break;
+            }
+            // index is found at this point, so check if the key exists, if it doesn't, add it and new arraylist
+            else if (!hash.containsKey(index)){
+                hash.put(index, new ArrayList<>());
+            }
+            // otherwise, add the row to the arraylist associated with the key
+            else {
+                hash.get(index).add(rowCount);
+                // get the next index starting from where the previous index position left off
+                // by using a substring and starting place in the indexOf function
+                index = array.indexOf(character, index + 1);
+            }
+        }
+
     }
     // update index hash so that each 0 moves as North as possible stopping under # if applicable
     public static HashMap roundShapedRocksHash(HashMap<Integer, ArrayList<String>> map) {
