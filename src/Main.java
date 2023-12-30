@@ -13,53 +13,34 @@ public class Main {
     // need to pass in two hashes to cubedShapedRocksHash to create the hashes for 0 and # where the columns and rows index positions are stored
     // or make a hash of hashes. keys for outer hash being round 0 and # rocks
     /**
-     * creates a hash from a file where the keys are columns and the values are array list of rows to represent
-     * which rows contain a cubed rock # in each column
+     * changes cubed and rounded hashes in place so they contain columns and rows in their hashes by storing the indices
      * @param file txt file of shaped and round rocks in a matrix
-     * @return hashmap of columns and rows, k v
+     * @param cubedHash hash containing indices where the columns are keys and values are array list of index positions of #
+     * @param roundHash hash containing indices where the columns are keys and values are array list of index positions of 0
+     *
      */
     public static void cubedShapedRocksHash(String file, HashMap<Integer,ArrayList<Integer>> cubedHash, HashMap<Integer,ArrayList<Integer>> roundHash) {
         try (FileReader fileReader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String line;
-            int rowCount = 0;
-            int index = 0;
+
 
             while ((line = bufferedReader.readLine()) != null) {
+                int index = 0;
                 // read file line by line using buffering
-                String array = line;
-                for (int j = 0; j < array.length(); j++) {
-                    // get the first index of during the first iteration
-                    if (index == 0) {
-                        index = array.indexOf('#');
-                    }
-                    // if no # are found then break the iteration
-                    if (index == -1) {
-                        break;
-                    }
-                    // index is found at this point, so check if the key exists, if it doesn't, add it and new arraylist
-                    else if (!cubedHash.containsKey(index)){
-                        cubedHash.put(index, new ArrayList<>());
-                    }
-                    // otherwise, add the row to the arraylist associated with the key
-                    else {
-                        cubedHash.get(index).add(rowCount);
-                        // get the next index starting from where the previous index position left off
-                        // by using a substring and starting place in the indexOf function
-                        index = array.indexOf('#', index + 1);
-                    }
-                }
+                createHash(line,cubedHash, index,'#');
+                createHash(line,roundHash, index, 'O');
                 // reassign index back to zero after each iteration of rows and increase row count
-                index = 0;
-                rowCount++;
+
             }
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }
     }
     // need rowCount, index, string, hash
-    public static void createHash(String line, HashMap<Integer, ArrayList<Integer>> hash, int index, int rowCount, char character) {
+    public static void createHash(String line, HashMap<Integer, ArrayList<Integer>> hash, int index, char character) {
         String array = line;
+        int rowCount = 0;
         for (int j = 0; j < array.length(); j++) {
             // get the first index of during the first iteration
             if (index == 0) {
@@ -67,6 +48,8 @@ public class Main {
             }
             // if no # are found then break the iteration
             if (index == -1) {
+                index = 0;
+                rowCount++;
                 break;
             }
             // index is found at this point, so check if the key exists, if it doesn't, add it and new arraylist
@@ -81,10 +64,9 @@ public class Main {
                 index = array.indexOf(character, index + 1);
             }
         }
-
     }
-    // update index hash so that each 0 moves as North as possible stopping under # if applicable
-    public static HashMap roundShapedRocksHash(HashMap<Integer, ArrayList<String>> map) {
+    // create new hash so that each 0 moves as North as possible stopping under # if applicable. keys are columns and values are rows
+    public static HashMap roundShapedRocksHash(HashMap<Integer, ArrayList<String>> cubedHash, HashMap<Integer, ArrayList<String>> roundHash ) {
         HashMap<Integer, ArrayList<Integer>> hash = new HashMap<>();
         // using almost the same logic as above we can get the index positions of each 0, column
         // use the index position to find the key value from the map hash being passed in the params
