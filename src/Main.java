@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         HashMap cubedHash = new HashMap<Integer, ArrayList<Integer>>();
         HashMap roundHash = new HashMap<Integer, ArrayList<Integer>>();
-        cubedShapedRocksHash("day14smallerinput.txt", cubedHash, roundHash);
+        HashMap shiftedHash = cubedShapedRocksHash("day14smallerinput.txt", cubedHash, roundHash);
     }
     // need to pass in two hashes to cubedShapedRocksHash to create the hashes for 0 and # where the columns and rows index positions are stored
     // or make a hash of hashes. keys for outer hash being round 0 and # rocks
@@ -19,10 +19,13 @@ public class Main {
      * @param roundHash hash containing indices where the columns are keys and values are array list of index positions of 0
      *
      */
-    public static void cubedShapedRocksHash(String file, HashMap<Integer,ArrayList<Integer>> cubedHash, HashMap<Integer,ArrayList<Integer>> roundHash) {
+    public static HashMap<Integer, ArrayList<Integer>>  cubedShapedRocksHash(String file, HashMap<Integer,ArrayList<Integer>> cubedHash, HashMap<Integer,ArrayList<Integer>> roundHash) {
+        HashMap<Integer, ArrayList<Integer>> finalHash = new HashMap<>();
         try (FileReader fileReader = new FileReader(file);
+
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String line;
+            int lineCount = 0;
 
 
             while ((line = bufferedReader.readLine()) != null) {
@@ -31,11 +34,14 @@ public class Main {
                 createHash(line,cubedHash, index,'#');
                 createHash(line,roundHash, index, 'O');
                 // reassign index back to zero after each iteration of rows and increase row count
+                lineCount++;
 
             }
+            finalHash = roundShapedRocksHash(cubedHash,roundHash,lineCount);
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }
+        return finalHash;
     }
 
     /**
@@ -74,10 +80,33 @@ public class Main {
         }
     }
     // create new hash so that each 0 moves as North as possible stopping under # if applicable. keys are columns and values are rows
-    public static HashMap roundShapedRocksHash(HashMap<Integer, ArrayList<String>> cubedHash, HashMap<Integer, ArrayList<String>> roundHash ) {
+    public static HashMap roundShapedRocksHash(HashMap<Integer, ArrayList<Integer>> cubedHash, HashMap<Integer, ArrayList<Integer>> roundHash, int fileLength ) {
         HashMap<Integer, ArrayList<Integer>> hash = new HashMap<>();
         // using almost the same logic as above we can get the index positions of each 0, column
         // use the index position to find the key value from the map hash being passed in the params
+        // start by iterating through each column
+        for (int i = 0; i < cubedHash.keySet().size(); i++) {
+            if (cubedHash.get(i) != null && roundHash.get(i) != null) {
+                // if 'O' is in the column and # is in the column then move 'O' one row under the # row index in the new hash
+                // get highest value from cubed array list. add 1 then place it in the new hash after doing next step
+                // if column is not added into the new hash, add the key and new array list
+                if (!hash.containsKey(i)) {
+                    hash.put(i, new ArrayList<>());
+                }
+                else {
+                    int last = cubedHash.get(i).size();
+                    hash.get(i).add(fileLength - (cubedHash.get(i).get(last) + 1));
+                }
+                // rowTotal (lineCount) - row equals new row
+                // reverse the column rows for new hash
+            }
+            // if there are no # in the column buta 0 is present
+            // put the
+            else if (roundHash.get(i) != null){
+                hash.get(i).add(fileLength);
+            }
+
+        }
         // find the highest value from the array list and subtract 1 to get the row for the 0 rock
         // the map hash must also be updated so that row where the 0 is moved to, is added to the array list
         return hash;
