@@ -26,15 +26,13 @@ public class Main {
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String line;
             int lineCount = 0;
-            String firstLine = bufferedReader.readLine();
-            int firstLineLength = firstLine.length();
 
 
             while ((line = bufferedReader.readLine()) != null) {
                 int index = 0;
                 // read file line by line using buffering
-                createHash(line,cubedHash, index,'#');
-                createHash(line,roundHash, index, 'O');
+                createHash(line,cubedHash, index,'#', lineCount);
+                createHash(line,roundHash, index, 'O', lineCount);
                 // reassign index back to zero after each iteration of rows and increase row count
                 lineCount++;
             }
@@ -53,9 +51,9 @@ public class Main {
      * @param character character that data is being collected for
      */
     // need rowCount, index, string, hash
-    public static void createHash(String line, HashMap<Integer, ArrayList<Integer>> hash, int index, char character) {
+    public static void createHash(String line, HashMap<Integer, ArrayList<Integer>> hash, int index, char character, int lineCount) {
         String array = line;
-        int rowCount = 0;
+        //int rowCount = 0;
         int columnLength = array.length();
         for (int j = 0; j < columnLength; j++) {
             // if we are on the first column, store key as -1 and the new array list holds in the cubed hash.
@@ -72,7 +70,7 @@ public class Main {
             // if no # are found then break the iteration
             if (index == -1) {
                 index = 0;
-                rowCount++;
+                lineCount++;
                 break;
             }
             // index is found at this point, so check if the key exists, if it doesn't, add it and new arraylist
@@ -80,8 +78,8 @@ public class Main {
                 hash.put(index, new ArrayList<>());
             }
             // otherwise, add the row to the arraylist associated with the key
-            else {
-                hash.get(index).add(rowCount);
+            if (hash.containsKey(index)) {
+                hash.get(index).add(lineCount);
                 // get the next index starting from where the previous index position left off
                 // by using a substring and starting place in the indexOf function
                 index = array.indexOf(character, index + 1);
@@ -94,7 +92,7 @@ public class Main {
         // using almost the same logic as above we can get the index positions of each 0, column
         // use the index position to find the key value from the map hash being passed in the params
         // get total number of columns from the cubed hash
-        int lineLength = hash.get(-1).get(0);
+        int lineLength = cubedHash.get(-1).get(0);
         // start by iterating through each column
         for (int i = 0; i < lineLength; i++) {
             if (cubedHash.get(i) != null && roundHash.get(i) != null) {
@@ -104,9 +102,9 @@ public class Main {
                 if (!hash.containsKey(i)) {
                     hash.put(i, new ArrayList<>());
                 }
-                else {
-                    int last = cubedHash.get(i).size();
-                    hash.get(i).add(fileLength - (cubedHash.get(i).get(last) + 1));
+                if (hash.containsKey(i)){
+                    int last = cubedHash.get(i).size() - 1;
+                    hash.get(i).add(fileLength - ((cubedHash.get(i).get(last)) + 1));
                 }
                 // rowTotal (lineCount) - row equals new row
                 // reverse the column rows for new hash
@@ -117,7 +115,7 @@ public class Main {
                 if (!hash.containsKey(i)) {
                     hash.put(i, new ArrayList<>());
                 }
-                else {
+                if (hash.containsKey(i)) {
                     hash.get(i).add(fileLength);
                 }
             }
