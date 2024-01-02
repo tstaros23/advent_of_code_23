@@ -53,7 +53,6 @@ public class Main {
     // need rowCount, index, string, hash
     public static void createHash(String line, HashMap<Integer, ArrayList<Integer>> hash, int index, char character, int lineCount) {
         String array = line;
-        //int rowCount = 0;
         int columnLength = array.length();
         for (int j = 0; j < columnLength; j++) {
             // if we are on the first column, store key as -1 and the new array list holds in the cubed hash.
@@ -69,8 +68,6 @@ public class Main {
             }
             // if no # are found then break the iteration
             if (index == -1) {
-                index = 0;
-                lineCount++;
                 break;
             }
             // index is found at this point, so check if the key exists, if it doesn't, add it and new arraylist
