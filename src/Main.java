@@ -107,18 +107,26 @@ public class Main {
 
                     Set<Integer> roundKeySet = cubedHash.keySet();
                     ArrayList<Integer> roundRowValues = new ArrayList<>(roundKeySet);
+                    // create variable to store current cube row and round row
+                    int currentCubedRow = cubedRowValues.get(j);
                     // break loop once 0 is empty
                     if (roundRowValues.isEmpty())
                         break;
                     // check if there is a null spot one row below first #, then check if there is a 0 row > current #
                     // and less than next # row or 0 row if they are not null
-                    if (cubedHash.get((int) cubedHash.keySet().toArray()[0] - 1) == null) {
+                    if (cubedHash.get(currentCubedRow - 1) == null) {
+                        // if there is a next cubed row, make sure it is > than current 0 row
+                        if (cubedRowValues.get(j + 1) != null) {
+                            if (roundRowValues.get(0) < cubedRowValues.get(j+1)) {
+                                // if it is then it is in the middle of two #s and there is space under the # above so shift
+                                hash.get(i).add(fileLength - currentCubedRow + 1);
+                            }
+                        }
                         // 0 will be removed once compared to current # row and next # row range
                     }
                 }
                 if (hash.containsKey(i)){
-                    int last = cubedHash.get(i).size() - 1;
-                    hash.get(i).add(fileLength - ((cubedHash.get(i).get(last)) + 1));
+
                 }
                 // rowTotal (lineCount) - row equals new row
                 // reverse the column rows for new hash
