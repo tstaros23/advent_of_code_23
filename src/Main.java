@@ -1,8 +1,7 @@
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
@@ -95,9 +94,27 @@ public class Main {
             if (cubedHash.get(i) != null && roundHash.get(i) != null) {
                 // if 'O' is in the column and # is in the column then move 'O' one row under the # row index in the new hash
                 // get highest value from cubed array list. add 1 then place it in the new hash after doing next step
-                // if column is not added into the new hash, add the key and new array list
+                // need to iterate over all the rows
                 if (!hash.containsKey(i)) {
                     hash.put(i, new ArrayList<>());
+                }
+                // go # by # row by row and see if there is a null spot below the current and then if there is a 0 between
+                // current # row and the next # row
+                for (int j = 0; j < cubedHash.get(i).size(); j++) {
+                    // save both array list values of # and 0
+                    Set<Integer> cubedKeySet = cubedHash.keySet();
+                    ArrayList<Integer> cubedRowValues = new ArrayList<>(cubedKeySet);
+
+                    Set<Integer> roundKeySet = cubedHash.keySet();
+                    ArrayList<Integer> roundRowValues = new ArrayList<>(roundKeySet);
+                    // break loop once 0 is empty
+                    if (roundRowValues.isEmpty())
+                        break;
+                    // check if there is a null spot one row below first #, then check if there is a 0 row > current #
+                    // and less than next # row or 0 row if they are not null
+                    if (cubedHash.get((int) cubedHash.keySet().toArray()[0] - 1) == null) {
+                        // 0 will be removed once compared to current # row and next # row range
+                    }
                 }
                 if (hash.containsKey(i)){
                     int last = cubedHash.get(i).size() - 1;
